@@ -15,16 +15,31 @@ import DiscoverDirectory from '@/app/components/DiscoverDirectory';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('landing');
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const { user, toast, loading } = useApp();
 
-  // Track mouse coordinates for interactive cursor-following backdrop blob!
+  // Throttled mouse follower — only on desktop, only updates every 50ms
+  const mousePosRef = React.useRef({ x: 0, y: 0 });
+  const blobRef = React.useRef(null);
+
   useEffect(() => {
+    if (window.innerWidth < 1024) return; // skip entirely on mobile/tablet
+    let rafId;
     const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      mousePosRef.current = { x: e.clientX, y: e.clientY };
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          if (blobRef.current) {
+            blobRef.current.style.transform = `translate3d(${mousePosRef.current.x - 150}px, ${mousePosRef.current.y - 150}px, 0)`;
+          }
+          rafId = null;
+        });
+      }
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // 1. On mount: Read 'tab' parameter from URL to preserve page refreshes!
@@ -101,32 +116,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen min-h-dvh bg-gradient-mesh bg-slate-50 flex flex-col selection:bg-indigo-500/10 selection:text-indigo-600 relative overflow-hidden">
-      {/* Premium Looping Background Gradient Video */}
-      <video 
-        autoPlay 
-        loop 
-        muted 
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 opacity-25 transition-opacity duration-1000"
-      >
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-liquid-gradient-under-glowing-light-41561-large.mp4" type="video/mp4" />
-      </video>
+      {/* Static CSS gradient background — replaces the heavy MP4 video */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-60"
+        style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.07) 0%, transparent 60%), radial-gradient(ellipse at 60% 80%, rgba(236,72,153,0.04) 0%, transparent 50%)' }}
+      />
 
-      {/* Dynamic Animated Background Blobs */}
+      {/* Animated blobs — disabled on mobile via CSS */}
       <div className="absolute top-1/4 left-1/10 w-72 sm:w-96 h-72 sm:h-96 bg-blue-400/10 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none animate-blob-1 z-0"></div>
       <div className="absolute top-1/2 right-1/10 w-80 sm:w-96 h-80 sm:h-96 bg-purple-400/10 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none animate-blob-2 z-0"></div>
-      <div className="absolute bottom-1/10 left-1/3 w-72 sm:w-80 h-72 sm:h-80 bg-pink-400/5 rounded-full blur-[60px] sm:blur-[80px] pointer-events-none animate-blob-1 z-0"></div>
 
-      {/* Interactive Mouse-Reactive Follower Blob (GPU-Optimized 120 FPS!) */}
-      <div 
-        className="fixed pointer-events-none rounded-full bg-indigo-500/10 blur-[100px] transition-transform duration-[700ms] ease-out z-0 hidden lg:block"
-        style={{
-          top: 0,
-          left: 0,
-          width: '300px',
-          height: '300px',
-          transform: `translate3d(${mousePos.x - 150}px, ${mousePos.y - 150}px, 0)`
-        }}
+      {/* Mouse-reactive blob — desktop only, DOM-direct (no re-render) */}
+      <div
+        ref={blobRef}
+        className="fixed pointer-events-none rounded-full bg-indigo-500/10 blur-[100px] z-0 hidden lg:block will-change-transform"
+        style={{ top: 0, left: 0, width: '300px', height: '300px', transform: 'translate3d(-300px,-300px,0)' }}
       />
 
       {/* Shared Reusable Header */}

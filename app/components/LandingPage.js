@@ -130,6 +130,8 @@ export default function LandingPage({ setActiveTab }) {
               src="https://images.unsplash.com/photo-1607746882042-944635dfe10e" 
               alt="Indian college student with laptop studying under natural light" 
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/20 via-transparent to-transparent"></div>
           </motion.div>
@@ -144,13 +146,12 @@ export default function LandingPage({ setActiveTab }) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          <div className="bg-white/60 backdrop-blur-lg border border-white/50 p-6 rounded-2xl flex flex-col gap-4 shadow-lg transition-all duration-300 hover:scale-[1.05] hover:shadow-xl group">
+          <div className="bg-white border border-slate-100 p-6 rounded-2xl flex flex-col gap-4 shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md group">
             <div className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-500 shrink-0">
               <Sparkles className="w-5.5 h-5.5" />
             </div>
             <h3 className="text-lg font-bold text-slate-900">AI Compatibility</h3>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold">Cuts out matching friction completely by checking income, social category, and course eligibility.</p>
-            {/* Visual element: Mini progress bar */}
             <div className="mt-2 bg-slate-100/80 p-2.5 rounded-xl border border-slate-200/40">
               <div className="flex justify-between text-[9px] font-extrabold text-slate-400 mb-1">
                 <span>VJTI Scholarship match</span>
@@ -162,39 +163,36 @@ export default function LandingPage({ setActiveTab }) {
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-lg border border-white/50 p-6 rounded-2xl flex flex-col gap-4 shadow-lg transition-all duration-300 hover:scale-[1.05] hover:shadow-xl group">
+          <div className="bg-white border border-slate-100 p-6 rounded-2xl flex flex-col gap-4 shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md group">
             <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 shrink-0">
               <ArrowRight className="w-5.5 h-5.5 text-blue-500" />
             </div>
             <h3 className="text-lg font-bold text-slate-900">Deadline Reminders</h3>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold">Keep tabs on closing dates with senior-like notifications before any central/state schemes expire.</p>
-            {/* Visual element: Notification badge */}
             <div className="mt-2 bg-rose-50 border border-rose-100 p-2.5 rounded-xl flex items-center gap-2 text-[10px] font-bold text-rose-600">
               <Bell className="w-3.5 h-3.5 animate-bounce shrink-0" />
               <span>MahaDBT closes in 3 days!</span>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-lg border border-white/50 p-6 rounded-2xl flex flex-col gap-4 shadow-lg transition-all duration-300 hover:scale-[1.05] hover:shadow-xl group">
+          <div className="bg-white border border-slate-100 p-6 rounded-2xl flex flex-col gap-4 shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md group">
             <div className="w-11 h-11 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-500 shrink-0">
               <Compass className="w-5.5 h-5.5" />
             </div>
             <h3 className="text-lg font-bold text-slate-900">Smart Saved Tracker</h3>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold">Save matching schemes and monitor completed document uploads in your dashboard in one click.</p>
-            {/* Visual element: Checklist */}
             <div className="mt-2 bg-slate-100/80 p-2.5 rounded-xl flex flex-col gap-1 text-[9px] font-extrabold text-slate-500">
               <div className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Income Certificate</div>
               <div className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-slate-300 shrink-0" /> Cast Validity</div>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-lg border border-white/50 p-6 rounded-2xl flex flex-col gap-4 shadow-lg transition-all duration-300 hover:scale-[1.05] hover:shadow-xl group">
+          <div className="bg-white border border-slate-100 p-6 rounded-2xl flex flex-col gap-4 shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md group">
             <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 shrink-0">
               <CheckCircle className="w-5.5 h-5.5" />
             </div>
             <h3 className="text-lg font-bold text-slate-900">MahaDBT Sync Links</h3>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold">Direct redirection to official MahaDBT and central application portals with document guidelines.</p>
-            {/* Visual element: Verify tag */}
             <div className="mt-2 bg-emerald-50 border border-emerald-100 p-2.5 rounded-xl flex items-center gap-2 text-[10px] font-bold text-emerald-600">
               <CheckCircle className="w-3.5 h-3.5 shrink-0" />
               <span>Government Verified Schemes</span>
@@ -262,7 +260,7 @@ export default function LandingPage({ setActiveTab }) {
             <div key={index} className="glass-card p-6 rounded-2xl flex flex-col justify-between gap-6 hover:scale-[1.05]">
               <p className="text-sm italic text-slate-600 font-medium leading-relaxed">"{item.quote}"</p>
               <div className="flex items-center gap-3">
-                <img src={item.avatar} alt={item.name} className="w-11 h-11 rounded-full border-2 border-indigo-200 object-cover shrink-0 shadow-sm" />
+                <img src={item.avatar} alt={item.name} className="w-11 h-11 rounded-full border-2 border-indigo-200 object-cover shrink-0 shadow-sm" loading="lazy" decoding="async" />
                 <div>
                   <h4 className="text-sm font-bold text-slate-900">{item.name}</h4>
                   <p className="text-xs text-slate-400 font-bold">{item.college}</p>
