@@ -8,6 +8,13 @@
   --border-glass: rgba(255, 255, 255, 0.4);
 }
 
+/* Smooth scroll for all anchor/tab navigation */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%; /* prevent iOS font scaling on rotate */
+  text-size-adjust: 100%;
+}
+
 html, body {
   overscroll-behavior: none;
   overscroll-behavior-y: none;
@@ -21,6 +28,26 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
+  min-height: 100dvh; /* dynamic viewport height — fixes iOS address bar gap */
+  /* Safe area insets for notched phones */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  /* Smooth momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* All scrollable containers get smooth scroll + momentum */
+* {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent; /* remove grey flash on mobile tap */
+  box-sizing: border-box;
+}
+
+/* Prevent text selection flicker on button taps */
+button, a {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation; /* removes 300ms tap delay on mobile */
 }
 
 /* Premium Light Mode Glassmorphism Panels */
@@ -86,6 +113,16 @@ body {
   background: rgba(99, 102, 241, 0.45);
 }
 
+/* Hide scrollbar on mobile (touch devices scroll natively) */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    scrollbar-width: none;
+  }
+}
+
 /* Dynamic Gradients & Colors */
 .bg-brand-purple {
   background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
@@ -121,6 +158,26 @@ body {
   animation: float-blob-2 12s ease-in-out infinite;
 }
 
+/* Disable heavy animations on mobile to save battery & prevent jank */
+@media (max-width: 768px) {
+  .animate-blob-1,
+  .animate-blob-2 {
+    animation: none;
+  }
+}
+
+/* Respect user's OS-level reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -128,4 +185,18 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Bottom safe area padding for iPhone home indicator */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* Full dynamic viewport height utility */
+.h-dvh {
+  height: 100dvh;
+}
+
+.min-h-dvh {
+  min-height: 100dvh;
 }

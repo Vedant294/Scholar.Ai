@@ -138,7 +138,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex-1 flex h-[calc(100vh-75px)] relative overflow-hidden z-10">
+    <div className="flex-1 flex h-[calc(100dvh-75px)] relative overflow-hidden z-10">
       {/* Sidebar - Desktop */}
       <aside className="w-80 border-r border-slate-200/50 glass-panel hidden lg:flex flex-col p-4 justify-between shadow-sm">
         <div className="flex flex-col gap-4">
@@ -252,7 +252,7 @@ export default function ChatInterface() {
           <span className="text-xs font-bold text-slate-400">Senior Advisor Active</span>
         </div>
 
-        <div className="flex-1 overflow-y-auto flex flex-col gap-5 sm:gap-6 pr-2 max-w-4xl mx-auto w-full pb-4 scroll-smooth">
+        <div className="flex-1 overflow-y-auto flex flex-col gap-5 sm:gap-6 pr-2 max-w-4xl mx-auto w-full pb-4 scroll-smooth overscroll-contain" style={{WebkitOverflowScrolling: 'touch'}}>
           {activeConversation?.messages.map((msg, i) => (
             <div key={i} className={`flex gap-3 sm:gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role !== 'user' && (
@@ -314,7 +314,7 @@ export default function ChatInterface() {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto w-full flex items-center gap-2">
+        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto w-full flex items-center gap-2 pb-safe">
           <input 
             type="text"
             placeholder="Ask ScholarAI..."

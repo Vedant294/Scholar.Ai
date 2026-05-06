@@ -6,9 +6,17 @@ export const metadata = {
   description: 'Discover, match, and apply for government, state, and private scholarships in India with instant AI guidance.',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#6366f1',
+};
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="min-h-full">
+    <html lang="en" className="min-h-full scroll-smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />

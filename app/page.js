@@ -100,7 +100,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh bg-slate-50 flex flex-col selection:bg-indigo-500/10 selection:text-indigo-600 relative overflow-hidden">
+    <div className="min-h-screen min-h-dvh bg-gradient-mesh bg-slate-50 flex flex-col selection:bg-indigo-500/10 selection:text-indigo-600 relative overflow-hidden">
       {/* Premium Looping Background Gradient Video */}
       <video 
         autoPlay 
