@@ -2,8 +2,11 @@
 
 An AI-powered scholarship discovery platform for Indian students. Users complete a profile (state, category, income, course) and get matched to real government and private scholarships with eligibility scores. A built-in chat assistant answers questions using Gemini or Grok, with a local fallback engine that works even without API keys.
 
-**Live stack:** Next.js 14 · Tailwind CSS · Framer Motion · MongoDB Atlas · Gemini 1.5 Flash / Grok xAI
 
+## live Preview 
+https://aischolarr.netlify.app/
+
+**Live stack:** Next.js 14 · Tailwind CSS · Framer Motion · MongoDB Atlas · Gemini 1.5 Flash / Grok xAI
 ---
 
 ## Project Overview
