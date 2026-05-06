@@ -17,9 +17,9 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: "Message is required" }), { status: 400 });
     }
 
-    // --- TOKEN SAVING INTERCEPTOR: Handle greetings & general keywords locally (0 TOKENS CONSUMED!) ---
+    // --- TOKEN SAVING INTERCEPTOR: Handle greetings locally (0 TOKENS CONSUMED!) ---
     const lowerMessage = message.trim().toLowerCase();
-    const isSimpleGreeting = lowerMessage === 'hi' || lowerMessage === 'hello' || lowerMessage === 'hey' || lowerMessage === 'who are you';
+    const isSimpleGreeting = ['hi', 'hello', 'hey', 'who are you'].includes(lowerMessage);
     if (isSimpleGreeting) {
       console.log("Serving standard greeting locally to save 100% LLM API free-tier tokens.");
       const reply = generateSmartFallbackReply(message, userProfile);
@@ -212,6 +212,20 @@ function generateSmartFallbackReply(message, profile) {
     score: calculateEligibility(profile, s)
   })).sort((a, b) => b.score - a.score);
 
+  // Eligibility / find queries — check FIRST before greeting
+  if (msg.includes("eligible") || msg.includes("qualify") || msg.includes("match") || msg.includes("find") || msg.includes("scholarship")) {
+    const qualified = matches.filter(s => s.score >= 50);
+    if (qualified.length === 0) {
+      return `Based on your current profile (Income: ₹${Number(profile?.income || 0).toLocaleString('en-IN')}, Category: ${profile?.category}), you don't fully match our major loaded scholarships. Try lowering your income or adjusting filters in the Discover panel!`;
+    }
+    let reply = `Based on your profile, here are your best matched scholarships:\n\n`;
+    qualified.slice(0, 3).forEach(s => {
+      reply += `• **${s.name}**\n  - **Match Score:** ${s.score}%\n  - **Provider:** ${s.provider}\n  - **Benefit:** ₹${s.benefits.amount.toLocaleString('en-IN')} (${s.benefits.type})\n  - **Deadline:** ${s.deadline}\n\n`;
+    });
+    reply += `You can save these directly to your **Dashboard** tracker to receive reminders!`;
+    return reply;
+  }
+
   if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
     return `Hello! 👋 I am ScholarAI, your personalized scholarship advisor. Based on your profile (${profile?.course || "UG"} in ${profile?.state || "India"}), I have pre-calculated your eligibility for top central, state, and private scholarships.\n\nAsk me anything like:\n• **"What scholarships do I qualify for?"**\n• **"Tell me about Maharashtra state scholarships."**\n• **"Am I eligible for Tata or Reliance schemes?"**`;
   }
@@ -221,7 +235,6 @@ function generateSmartFallbackReply(message, profile) {
     if (mahSchols.length === 0) {
       return `I see you are interested in Maharashtra scholarships! Please complete your onboarding or update your state to **Maharashtra** in your dashboard profile so I can fetch and match the top MahaDBT schemes for you.`;
     }
-    
     let reply = `Here are the top real **Maharashtra State Scholarships** matching your profile:\n\n`;
     mahSchols.forEach(s => {
       reply += `• **${s.name}**\n  - **Eligibility Match:** ${s.score}%\n  - **Benefits:** ₹${s.benefits.amount.toLocaleString('en-IN')} / year\n  - **Deadline:** ${s.deadline}\n  - **Direct Apply:** [MahaDBT Portal](${s.applyLink})\n\n`;
@@ -230,18 +243,8 @@ function generateSmartFallbackReply(message, profile) {
     return reply;
   }
 
-  if (msg.includes("eligible") || msg.includes("qualify") || msg.includes("match") || msg.includes("find")) {
-    const qualified = matches.filter(s => s.score >= 50);
-    if (qualified.length === 0) {
-      return `Based on your current profile (Income: ₹${Number(profile?.income || 0).toLocaleString('en-IN')}, Category: ${profile?.category}), you don't fully match our major loaded scholarships. Try lowering your income or adjusting filters in the Discover panel!`;
-    }
-
-    let reply = `Based on your profile, here are your best matched scholarships:\n\n`;
-    qualified.slice(0, 3).forEach(s => {
-      reply += `• **${s.name}**\n  - **Match Score:** ${s.score}%\n  - **Provider:** ${s.provider}\n  - **Benefit:** ₹${s.benefits.amount.toLocaleString('en-IN')} (${s.benefits.type})\n  - **Deadline:** ${s.deadline}\n\n`;
-    });
-    reply += `You can save these directly to your **Dashboard** tracker to receive reminders!`;
-    return reply;
+  if (msg.includes("document") || msg.includes("checklist") || msg.includes("required")) {
+    return `Here's a standard **document checklist** for most Indian scholarships:\n\n• **Aadhaar Card** (student + parent)\n• **Income Certificate** (issued by Tehsildar)\n• **Caste/Category Certificate** (if applicable)\n• **Previous Year Marksheet** (10th / 12th / last semester)\n• **College Admission Letter / Bonafide Certificate**\n• **Bank Passbook** (student's account)\n• **Passport-size Photograph**\n\nFor MahaDBT schemes, upload all documents on [mahadbt.maharashtra.gov.in](https://mahadbt.maharashtra.gov.in/).`;
   }
 
   return `I understand you are asking about scholarships. Here is a quick match based on your criteria:\n\nOur top recommendation for you is the **${matches[0]?.name}** with a match score of **${matches[0]?.score || 0}%**. It offers **₹${matches[0]?.benefits?.amount?.toLocaleString('en-IN')}** per year. Let me know if you want the application link or documents required for it!`;

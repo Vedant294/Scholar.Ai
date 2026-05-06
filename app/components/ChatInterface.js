@@ -51,16 +51,17 @@ export default function ChatInterface() {
     showToast("Chat deleted", "info");
   };
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (e, directMessage) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
+    const textToSend = directMessage || chatInput;
+    if (!textToSend.trim()) return;
 
     let currentConv = activeConversation;
     if (!currentConv) {
       const newId = "conv_" + Math.random().toString(36).substr(2, 9);
       currentConv = {
         id: newId,
-        title: chatInput.slice(0, 30) + (chatInput.length > 30 ? "..." : ""),
+        title: textToSend.slice(0, 30) + (textToSend.length > 30 ? "..." : ""),
         messages: []
       };
       setConversations([currentConv, ...conversations]);
@@ -69,13 +70,13 @@ export default function ChatInterface() {
 
     const userMsg = {
       role: "user",
-      content: chatInput,
+      content: textToSend,
       timestamp: new Date().toISOString()
     };
 
     const updatedMessages = [...currentConv.messages, userMsg];
     const isNewTitle = currentConv.title === "New Conversation" || currentConv.title === "Scholarship Assistant Chat" || currentConv.title === "New Matching Query";
-    const updatedTitle = isNewTitle ? chatInput.slice(0, 30) + (chatInput.length > 30 ? "..." : "") : currentConv.title;
+    const updatedTitle = isNewTitle ? textToSend.slice(0, 30) + (textToSend.length > 30 ? "..." : "") : currentConv.title;
 
     setConversations(prev => prev.map(c => {
       if (c.id === currentConv.id) {
@@ -84,7 +85,6 @@ export default function ChatInterface() {
       return c;
     }));
 
-    const sentText = chatInput;
     setChatInput('');
     setIsTyping(true);
 
@@ -93,7 +93,7 @@ export default function ChatInterface() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: sentText,
+          message: textToSend,
           conversationId: currentConv.id,
           userProfile: user?.profile,
           history: updatedMessages.slice(-8)
@@ -305,7 +305,12 @@ export default function ChatInterface() {
           ].map((chip, index) => (
             <button
               key={index}
-              onClick={() => setChatInput(chip)}
+              onClick={(e) => {
+                e.preventDefault();
+                setChatInput(chip);
+                // directly submit after setting input
+                handleSendMessage(e, chip);
+              }}
               className="px-3.5 py-2 bg-white hover:bg-indigo-50/50 hover:border-indigo-200/50 border border-slate-200 text-slate-600 rounded-full text-[10px] sm:text-xs font-bold transition shadow-sm"
             >
               {chip}
